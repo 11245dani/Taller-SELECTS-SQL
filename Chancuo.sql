@@ -166,13 +166,9 @@ WHERE ubicaciones.nombre = 'Almacen A' AND tipos.nombre = 'CO2';
 --punto 9
 SELECT AVG(extintores.capacidad) AS promedio_capacidades
 FROM extintores
-JOIN (
-    SELECT idextintor, COUNT(*) AS total_recargas
-    FROM recargas
-    GROUP BY idextintor
-    WHERE COUNT(*) > 3
-) AS recargas_totales ON extintores.id = recargas_totales.idextintor;
-
+JOIN recargas ON extintores.id = recargas.idextintor
+GROUP BY extintores.id
+HAVING COUNT(*) > 3;
 
 --punto 7
 SELECT COUNT(*) AS numero_recargas
@@ -180,6 +176,11 @@ FROM recargas
 JOIN inspecciones ON recargas.idextintor = inspecciones.idextintor
 WHERE DATEDIFF(CURDATE(), (SELECT MAX(fecha) FROM inspecciones WHERE inspecciones.idextintor = recargas.idextintor)) > 180;
 
+--punto 2
+SELECT tipos.nombre, SUM(extintores.capacidad) AS suma_capacidades
+FROM tipos
+JOIN extintores ON tipos.id = extintores.id
+GROUP BY tipos.id;
 
 
 
